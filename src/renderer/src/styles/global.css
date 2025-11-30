@@ -3,3 +3,29 @@
 html {
     overflow: hidden;
 }
+
+@keyframes slidein {
+  from {
+    width: 0;
+  }
+  to {
+    width: var(--radix-collapsible-content-width);
+  }
+}
+
+@keyframes slideout {
+  from {
+    width: var(--radix-collapsible-content-width);
+  }
+  to {
+    width: 0;
+  }
+}
+@layer utilities {
+  .animate-slidein {
+    animation: slidein 0.28s ease-in-out forwards;
+  }
+  .animate-slideout {
+    animation: slideout 0.28s ease-in-out forwards;
+  }
+}

@@ -2,6 +2,9 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { createFileRoute, createURLRoute } from 'electron-router-dom'
+import { createTray } from './tray'
+import './ipc'
+import './store'
 
 function createWindow(): void {
   // Create the browser window.
@@ -22,6 +25,9 @@ function createWindow(): void {
     }
   })
 
+  //Chamar para exibir o tray
+  createTray(mainWindow);
+
   if(process.platform === "darwin"){
     const iconPath = join(__dirname, 'resources', 'icon.png')
     app.dock!.setIcon(iconPath);
@@ -29,6 +35,7 @@ function createWindow(): void {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
+    //mainWindow.webContents.openDevTools();
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {

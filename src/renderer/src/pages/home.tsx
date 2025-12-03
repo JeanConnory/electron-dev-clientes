@@ -1,45 +1,40 @@
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { Link } from "react-router-dom"
 
 export function Home() {
 
-    async function handleAdd() {
+    const queryClient = useQueryClient();
+
+    //Buscar clientes
+    const { data, isFetching } = useQuery({queryKey: ['customers'], queryFn: async () => {
         const response = await window.api.fetchAllCustomers();
-        console.log(response);
-    }
-
-    async function handleCustomerById() {
-        const docId = "b0337c46-5b88-4d38-be6c-ee2d4da78010"; // Substitua pelo ID real do cliente que deseja buscar
-        const response = await window.api.fetchCustomerById(docId);
-        console.log(response);
-    }
-
-    async function handleDeleteCustomer() {
-        const docId = "2303664e-6b5a-4ee1-8ed9-90814502c2f0"; // Substitua pelo ID real do cliente que deseja deletar
-        const response = await window.api.deleteCustomer(docId);
-        console.log('Delete Customer Response:', response);
-    }
+        return response;
+    }});
 
     return (
-        <div>
-            <h1>Página Home</h1>
-            <Link to="/create">Go to Create Page</Link>
-            <br />
-            <br />
+        <div className="flex-1 flex flex-col py-12 text-white">
+            <div className="px-10">
+                <h1 className="text-white text-xl lg:text-3xl font-semibold mb-4">
+                    Todos os Clientes
+                </h1>
+            </div>
 
-            <button onClick={handleAdd}>
-                Buscar Clientes
-            </button>
-            <br />
-            <br />
-            <button onClick={handleCustomerById}>
-                Buscar Clientes pelo ID
-            </button>
-
-              <br />
-            <br />
-            <button onClick={handleDeleteCustomer}>
-                Deletar Cliente
-            </button>
+            <section className="flex flex-col gap-6 w-full h-screen overflow-y-auto px-10 pb-[200px]">
+                {!isFetching && data?.length === 0 && (
+                    <p className="text-gray-300">Nenhum cliente cadastrado.</p>
+                )}
+                {data?.map((customer) => (
+                    <Link to={`/customer/${customer._id}`} 
+                        key={customer._id}
+                        className="bg-gray-800 px-4 py-3 rounded">
+                        <p className="mb-2 font-semibold text-lg">{customer.name}</p>
+                        <p><span className="font-semibold">Email: </span>{customer.email}</p>
+                        {customer.phone && (<p>
+                                <span className="font-semibold">Telefone: </span>{customer.phone}
+                            </p>)}
+                    </Link>
+                ))}
+            </section>
         </div>        
     )
 }
